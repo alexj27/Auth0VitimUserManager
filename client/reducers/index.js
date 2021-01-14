@@ -25,6 +25,7 @@ import { userDelete } from './userDelete';
 import { fieldsChange } from './fieldsChange';
 import { usernameChange } from './usernameChange';
 import { users } from './users';
+import { requests } from './requests';
 import { verificationEmail } from './verificationEmail';
 
 function lastAction(state = null, action) {
@@ -42,6 +43,7 @@ export default combineReducers({
   languageDictionary,
   log,
   logs,
+  requests,
   mfa,
   passwordChange,
   passwordReset,

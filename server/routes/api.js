@@ -17,6 +17,7 @@ import scripts from './scripts';
 import me from './me';
 import logs from './logs';
 import users from './users';
+import requests from './requests';
 
 export default (storage) => {
   const scriptManager = new ScriptManager(storage);
@@ -118,6 +119,7 @@ export default (storage) => {
   api.use('/scripts', requireScope(constants.ADMIN_PERMISSION), scripts(storage, scriptManager));
   api.use('/users', managementApiClient, users(storage, scriptManager));
   api.use('/logs', managementApiClient, logs(scriptManager));
+  api.use('/requests', managementApiClient, requests(scriptManager));
   api.use('/me', me(scriptManager));
   api.get('/settings', (req, res, next) => {
     const settingsContext = {

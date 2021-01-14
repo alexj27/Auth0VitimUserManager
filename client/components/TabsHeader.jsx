@@ -10,6 +10,7 @@ export default class TabsHeader extends Component {
 
   render() {
     const hasLogsAccess = this.props.role >= 2;
+    const hasRequestsAccess = this.props.role >= 2;
 
     const languageDictionary = this.props.languageDictionary || {};
 
@@ -17,12 +18,16 @@ export default class TabsHeader extends Component {
       <div className="widget-title title-with-nav-bars">
         <ul className="nav nav-tabs">
           <TabPane
-            title={languageDictionary.userUsersTabTitle || "Users"}
-            route="users" />
+            title={languageDictionary.userUsersTabTitle || 'Users'}
+            route="users"/>
           {hasLogsAccess ?
             <TabPane
-              title={languageDictionary.userLogsTabTitle || "Logs"}
-              route="logs" /> : null}
+              title={languageDictionary.userLogsTabTitle || 'Logs'}
+              route="logs"/> : null}
+          {hasRequestsAccess ?
+            <TabPane
+              title={languageDictionary.userRequestsTabTitle || 'Requests'}
+              route="requests"/> : null}
         </ul>
       </div>
     );

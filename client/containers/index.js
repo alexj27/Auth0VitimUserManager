@@ -1,6 +1,7 @@
 export App from './App.jsx';
 export Login from './Login';
 export Logs from './Logs';
+export Requests from './Requests';
 export RequireAuthentication from './RequireAuthentication';
 export User from './Users/User';
 export Users from './Users/Users';
