@@ -10,15 +10,16 @@
   "logoUrl": "https://cdn.auth0.com/extensions/auth0-delegated-admin/assets/logo.svg",
   "initialUrlPath": "/",
   "docsUrl": "https://auth0.com/docs/extensions/delegated-admin",
-  "repository": "https://github.com/auth0-extensions/auth0-delegated-administration-extension",
+  "repository": "https://github.com/iScorpio/auth0-delegated-administration-extension",
   "keywords": [
     "auth0",
     "extension"
   ],
   "auth0": {
     "createClient": true,
+    "onInstallPath": "/.extensions/on-install",
     "onUninstallPath": "/.extensions/on-uninstall",
-    "scopes": "read:clients delete:clients read:connections read:users update:users delete:users create:users read:logs read:device_credentials update:device_credentials delete:device_credentials delete:guardian_enrollments"
+    "scopes": "read:clients delete:clients read:connections read:users update:users delete:users create:users read:logs read:device_credentials update:device_credentials delete:device_credentials delete:guardian_enrollments create:roles read:roles create:user_tickets"
   },
   "secrets": {
     "EXTENSION_CLIENT_ID": {
@@ -75,6 +76,22 @@
           "text": "Yes"
         }
       ]
+    },
+    "MAILGUN_API_KEY": {
+      "description": "Mailgun API Key",
+      "required": true
+    },
+    "MAILGUN_API_URL": {
+      "description": "Mailgun API Url",
+      "required": false
+    },
+    "MAILGUN_DOMAIN": {
+      "description": "Mailgun Domain",
+      "required": true
+    },
+    "MAILGUN_FROM": {
+      "description": "Mailgun From",
+      "required": false
     }
   }
 }
