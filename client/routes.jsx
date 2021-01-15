@@ -14,4 +14,5 @@ export default (history) =>
       <Route path="users/:id" component={containers.User} />
     </Route>
     <Route path="/login" component={containers.Login} />
+    <Route path="/signUp" component={containers.RequestForm} />
   </Router>;
