@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TabPane } from 'auth0-extension-ui';
+import { Badge } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import * as actions from '../actions/request';
 
-export default class TabsHeader extends Component {
+
+class TabsHeader extends Component {
   static propTypes = {
     role: PropTypes.number,
-    languageDictionary: PropTypes.object
+    languageDictionary: PropTypes.object,
+    requests: PropTypes.object,
   };
 
   render() {
@@ -26,10 +31,30 @@ export default class TabsHeader extends Component {
               route="logs"/> : null}
           {hasRequestsAccess ?
             <TabPane
-              title={languageDictionary.userRequestsTabTitle || 'Requests'}
+              title={(
+                <div>
+                  {languageDictionary.userRequestsTabTitle || 'Requests'}
+                  {' '}
+                  {this.props.requests.records.size && <Badge variant="light">{this.props.requests.records.size}</Badge>}
+                </div>)}
               route="requests"/> : null}
         </ul>
       </div>
     );
   }
 }
+
+
+function mapStateToProps(state) {
+  return {
+    requests: {
+      error: state.requests.get('error'),
+      loading: state.requests.get('loading'),
+      records: state.requests.get('records'),
+      total: state.requests.get('total'),
+      nextPage: state.requests.get('nextPage')
+    },
+  };
+}
+
+export default connect(mapStateToProps)(TabsHeader);
