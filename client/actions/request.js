@@ -45,7 +45,7 @@ export function resolveRequest(requestId, status) {
         }
       },
       payload: {
-        promise: axios.put(`/api/request/${requestId}`, { status }, {
+        promise: axios.patch(`/api/request/${requestId}`, { status }, {
           responseType: 'json'
         })
       }

@@ -17,6 +17,8 @@ import { Button, ButtonToolbar } from 'react-bootstrap';
 export default class RequestsTable extends Component {
   static propTypes = {
     onOpen: PropTypes.func.isRequired,
+    onAccept: PropTypes.func.isRequired,
+    onDecline: PropTypes.func.isRequired,
     error: PropTypes.string,
     loading: PropTypes.bool.isRequired,
     requests: PropTypes.object.isRequired,
@@ -28,14 +30,6 @@ export default class RequestsTable extends Component {
   shouldComponentUpdate(nextProps) {
     return nextProps.requests !== this.props.requests || nextProps.loading !== this.props.loading;
   }
-
-  accept = () => {
-    alert(1);
-  };
-
-  decline = () => {
-    alert(2);
-  };
 
   render() {
     const { error, loading, settings } = this.props;
@@ -72,7 +66,7 @@ export default class RequestsTable extends Component {
                         <Button
                           bsSize="small"
                           bsStyle="primary"
-                          onClick={this.accept}
+                          onClick={() => this.props.onAccept(request.id, 'accept')}
                           disabled={this.props.requests.loading}
                         >
                           <i
@@ -81,7 +75,7 @@ export default class RequestsTable extends Component {
                         <Button
                           bsSize="small"
                           disabled={this.props.requests.loading}
-                          onClick={this.decline}
+                          onClick={() => this.props.onDecline(request.id, 'decline')}
                         >
                           <i
                             className="icon icon-budicon-389"></i> {languageDictionary.logsLoadMoreButtonText || 'Decline'}

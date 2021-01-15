@@ -81,6 +81,8 @@ class RequestsContainer extends Component {
             <LoadingPanel show={requests.loading}>
               <RequestsTable
                 onOpen={this.props.fetchRequests}
+                onAccept={this.props.resolveRequest}
+                onDecline={this.props.resolveRequest}
                 loading={requests.loading}
                 requests={requests.records}
                 settings={settings}
