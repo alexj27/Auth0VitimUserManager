@@ -27,20 +27,9 @@ export const requests = createReducer(fromJS(initialState), { // eslint-disable-
     return state.merge({
       loading: false,
       nextPage: action.meta.page + 1,
-      records: state.get('records').concat(fromJS(data.map(log => {
-        log.shortType = log.type;
-        log.type = logTypes[log.type];
-        if (!log.type) {
-          log.type = {
-            // Don't do this, need to handle it elsewhere so language dictionary can do it: event: 'Unknown Event',
-            icon: {
-              name: '354',
-              color: '#FFA500'
-            }
-          };
-        }
-        return log;
-      })))
+      records: state.get('records').filter(record => {
+        return data.filter(r => record.get('email') === r.email).length === 0;
+      }).concat(fromJS(data))
     });
   }
 });

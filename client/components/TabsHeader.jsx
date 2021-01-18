@@ -18,6 +18,7 @@ class TabsHeader extends Component {
     const hasRequestsAccess = this.props.role >= 2;
 
     const languageDictionary = this.props.languageDictionary || {};
+    const reqBadges = this.props.requests.records.filter(r => r.get('status') === 'pending').size;
 
     return (
       <div className="widget-title title-with-nav-bars">
@@ -35,7 +36,7 @@ class TabsHeader extends Component {
                 <div>
                   {languageDictionary.userRequestsTabTitle || 'Requests'}
                   {' '}
-                  {this.props.requests.records.size && <Badge variant="light">{this.props.requests.records.size}</Badge>}
+                  {reqBadges ? <Badge variant="light">{reqBadges} </Badge> : null}
                 </div>)}
               route="requests"/> : null}
         </ul>

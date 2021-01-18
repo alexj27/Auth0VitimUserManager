@@ -47,6 +47,7 @@ export default class RequestsTable extends Component {
         <Table>
           <TableHeader>
             <TableColumn width="20%">{languageDictionary.requestEmailColumnHeader || 'Email'}</TableColumn>
+            <TableColumn width="12%">{languageDictionary.connection || 'Connection'}</TableColumn>
             <TableColumn width="12%">{languageDictionary.requestCreatedAtColumnHeader || 'Created at'}</TableColumn>
             <TableColumn width="15%"></TableColumn>
           </TableHeader>
@@ -60,13 +61,14 @@ export default class RequestsTable extends Component {
                 return (
                   <TableRow key={index}>
                     <TableTextCell>{request.email}</TableTextCell>
+                    <TableTextCell>{request.connection}</TableTextCell>
                     <TableTextCell>{request.time_ago}</TableTextCell>
                     <TableTextCell>
                       <ButtonToolbar className="pull-right">
                         <Button
                           bsSize="small"
                           bsStyle="primary"
-                          onClick={() => this.props.onAccept(request.id, 'accept')}
+                          onClick={() => this.props.onAccept(request._id, 'accept')}
                           disabled={this.props.requests.loading}
                         >
                           <i
@@ -75,7 +77,7 @@ export default class RequestsTable extends Component {
                         <Button
                           bsSize="small"
                           disabled={this.props.requests.loading}
-                          onClick={() => this.props.onDecline(request.id, 'decline')}
+                          onClick={() => this.props.onDecline(request._id, 'decline')}
                         >
                           <i
                             className="icon icon-budicon-389"></i> {languageDictionary.logsLoadMoreButtonText || 'Decline'}

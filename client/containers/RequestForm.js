@@ -1,23 +1,59 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, InputGroup, FormControl } from 'react-bootstrap';
+import * as actions from '../actions/request';
 import { connect } from 'react-redux';
 import { Field } from 'redux-form';
 import { reduxForm, formValueSelector } from 'redux-form';
 import './RequestForm.styles.css';
 
 
+function EmailField(props) {
+  const { languageDictionary = {}, meta: { touched, error, warning } } = props;
+
+  return (
+    <div className={`form-group ${touched && error ? 'has-error' : ''} ${touched && warning ? 'has-warning' : ''}`}>
+      <div className={`input-group`}>
+        <span className="input-group-addon"><i className='icon icon-budicon-778'/></span>
+        <input
+          {...props.input}
+          className="form-control"
+          placeholder={languageDictionary.email || 'Email'}
+        />
+      </div>
+      {touched && ((error && <span className="help-block">{error}</span>)
+        || (warning && <span className="help-block">{warning}</span>))}
+    </div>
+  );
+}
+
+
 class RequestForm extends Component {
-  static propTypes = {};
+  static propTypes = {
+    makeRequest: PropTypes.func.isRequired
+  };
+
+  state = {
+    status: null
+  };
 
   submit = (values) => {
-    console.log('--------------', values);
+    this.props.makeRequest(values);
+    this.setState({ status: 'ok' });
   };
 
   render() {
     const { handleSubmit, pristine, reset, submitting } = this.props;
+    const { status } = this.state;
 
     const languageDictionary = this.props.languageDictionary || {};
+
+    if (status === 'ok') {
+      return (
+        <div className={'RequestForm'} onSubmit={handleSubmit(this.submit)}>
+          <h2 className={'text-success'}>{languageDictionary.regReuestAccepted || 'Registration request accepted'}!</h2>
+        </div>
+      );
+    }
 
     return (
       <form className={'RequestForm'} onSubmit={handleSubmit(this.submit)}>
@@ -29,26 +65,8 @@ class RequestForm extends Component {
             <Field
               name="email"
               type="email"
-              component={(props) => {
-                const { meta: { touched, error, warning } } = props;
-                console.log('>>>>>>>>>>>', props);
-
-                return (
-                  <div className={`form-group ${touched && error ? 'has-error' : ''} ${touched && warning ? 'has-warning' : ''}`}>
-                    <div className={`input-group`}>
-                      <span className="input-group-addon"><i className='icon icon-budicon-778' /></span>
-                      <input
-                        {...props.input}
-                        className="form-control"
-                        placeholder={languageDictionary.email || 'Email'}
-                        aria-label={languageDictionary.email || 'Email'}
-                        aria-describedby="basic-addon1"/>
-                    </div>
-                    {touched && ((error && <span className="help-block">{error}</span>)
-                        || (warning && <span className="help-block">{warning}</span>))}
-                  </div>
-                );
-              }}
+              languageDictionary={languageDictionary}
+              component={EmailField}
               placeholder={languageDictionary.email || 'Email'}
               validate={
                 (f) => {
@@ -86,6 +104,6 @@ const connectDecorator = connect(state => {
     hasSelectedConnection,
     hasMembership
   };
-});
+}, actions);
 
 export default connectDecorator(reduxFormDecorator(RequestForm));

@@ -26,7 +26,7 @@ export function fetchRequest(requestId) {
       requestId
     },
     payload: {
-      promise: axios.get(`/api/request/${requestId}`, {
+      promise: axios.get(`/api/requests/${requestId}`, {
         responseType: 'json'
       })
     }
@@ -41,11 +41,27 @@ export function resolveRequest(requestId, status) {
         requestId,
         status,
         onSuccess: () => {
-          dispatch(fetchRequest(requestId));
+          dispatch(fetchRequests());
         }
       },
       payload: {
-        promise: axios.patch(`/api/request/${requestId}`, { status }, {
+        promise: axios.get(`/api/requests/${requestId}/${status}`, { }, {
+          responseType: 'json'
+        })
+      }
+    });
+  };
+}
+
+export function makeRequest(data) {
+  return (dispatch) => {
+    dispatch({
+      type: constants.MAKE_REQUEST,
+      meta: {
+        data,
+      },
+      payload: {
+        promise: axios.post(`/api/requests/`, data, {
           responseType: 'json'
         })
       }
