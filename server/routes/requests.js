@@ -88,7 +88,8 @@ const createRequestHandler = async (context, req, request) => {
 const acceptRequestHandler = async (context, auth0, request) => {
   let user = null;
   request.state = REQUEST_STATE_ALLOWED;
-  context.db.update('requests', request._id, request);
+  context.db.delete('requests', request._id, request);
+  // context.db.update('requests', request._id, request);
 
   try {
     user = await auth0.users.create({
