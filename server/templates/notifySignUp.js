@@ -37,8 +37,8 @@ export default (params) => {
                 </div>
                 <div style="max-width: 768px; min-width: 300px; padding: 15px; background-color: white; border-radius: 4px;">
                     <div style="padding: 10px 15px;">
-                        Hello, <br />${ params.username }(${ params.email }) has requested you to registration on the site ${ params.site }.
-                        The registration request will expire in {{ time }}. Please accept or decline this request.
+                        Hello, <br />${ params.email } has requested you to registration on the site ${ params.site }.
+                        Please accept or decline this request.
                     </div>
                     <div style="padding: 10px 55px; text-align:center;">
                         <a class="button" href='${ params.declineUrl }' target='_blank'
@@ -51,10 +51,9 @@ export default (params) => {
                         &nbsp;
                         &nbsp;
                         &nbsp;
-                        &nbsp;
                         <a class="button"
                                   style="background: #28a745!important;border-radius:3px;color:white;display:inline-block;font-family:'avenir next' , 'avenir' , sans-serif;font-size:14px;font-weight:500;line-height:120%;margin:0;padding:10px 25px 10px 25px;"
-                           href='{{ params.acceptUrl }}' target='_blank'
+                           href='${ params.acceptUrl }' target='_blank'
                         >
                             <span style="color: white!important; font-weight: bold;">
                                 Accept
