@@ -1,4 +1,4 @@
-export default () => {
+export default (params) => {
     return `
     <html>
     <head>

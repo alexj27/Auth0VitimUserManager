@@ -4,17 +4,20 @@ import * as tools from 'auth0-extension-tools';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
 import config from '../lib/config';
-import logger from '../lib/logger';
 import mailgun from 'mailgun.js';
 import { ADMIN_ROLE_NAME, AUDITOR_ROLE_NAME, NAME_FILTER_ROLES, USER_ROLE_NAME } from '../constants';
 import * as constants from '../constants';
 import { requireScope } from '../lib/middlewares';
+import onDeclineSingUp from '../templates/onDeclineSingUp';
+import notifySignUp from '../templates/notifySignUp';
 
 const ADMINS_ROLES = [ AUDITOR_ROLE_NAME, USER_ROLE_NAME, ADMIN_ROLE_NAME ];
 
 const REQUEST_STATE_PENDING = 'pending';
 const REQUEST_STATE_ALLOWED = 'allowed';
 const REQUEST_STATE_DECLINED = 'declined';
+
+let SITE = 'http://localhost';
 
 const validateEmail = (email) => {
   // todo impl
@@ -40,6 +43,7 @@ const getAdmins = async (auth0) => {
 
 const createRequestHandler = async (context, req, request) => {
   if (!request) {
+    let id = uuidv4();
     let connection = req.body.connection || 'Username-Password-Authentication';
     let identities = [];
     const users = await req.auth0.users.getByEmail(req.body.email.toLowerCase());
@@ -49,7 +53,7 @@ const createRequestHandler = async (context, req, request) => {
     let found = identities.filter(v => v.provider === 'auth0' && v.connection === connection);
     if (found.length === 0) {
       request = await context.db.create('requests', {
-        _id: uuidv4(),
+        _id: id,
         email: req.body.email.toLowerCase(),
         client_id: req.body.client_id && req.body.client_id.toLowerCase(),
         connection,
@@ -58,9 +62,8 @@ const createRequestHandler = async (context, req, request) => {
         count: 0
       });
     } else {
-      let REDIRECT_URL = 'http://localhost'; // todo fix by client_id
       await req.auth0.tickets.changePassword({
-        result_url: REDIRECT_URL,
+        result_url: SITE,
         user_id: `${found[0].provider}|${found[0].user_id}`,
         ttl_sec: 0,
         mark_email_as_verified: true,
@@ -74,11 +77,20 @@ const createRequestHandler = async (context, req, request) => {
     let adminsEmails = admins.map(v => v.email);
 
     const text = `Registration request for ${request.email}`;
+    const html = notifySignUp({
+      ...request,
+      username: req.user.username,
+      site: SITE,
+      support: config('SUPPORT'),
+      declineUrl: `${SITE}/${id}/decline`,
+      acceptUrl: `${SITE}/${id}/accept`,
+    });
     context.mg.messages.create(context.DOMAIN, {
       from: context.FROM,
       to: adminsEmails,
       subject: 'Registration request',
-      text
+      text,
+      html
     });
     request.count++;
     context.db.update('requests', request._id, request);
@@ -104,9 +116,8 @@ const acceptRequestHandler = async (context, auth0, request) => {
     [user] = await auth0.users.getByEmail(request.email);
   }
 
-  let REDIRECT_URL = 'http://localhost'; // todo fix by client_id
   const data = {
-    result_url: REDIRECT_URL,
+    result_url: SITE,
     user_id: user.user_id,
     // user_email: request.email,
     // connection: request.connection,
@@ -122,11 +133,20 @@ const declineRequestHandler = (context, auth0, request) => {
   request.state = REQUEST_STATE_DECLINED;
   context.db.delete('requests', request._id, request);
   const text = `Registration request for ${request.email} declined`;
+  const html = onDeclineSingUp({
+      ...request,
+      username: req.user.username,
+      site: SITE,
+      support: config('SUPPORT'),
+      declineUrl: `${SITE}/${id}/decline`,
+      acceptUrl: `${SITE}/${id}/accept`,
+    });
   context.mg.messages.create(context.DOMAIN, {
     from: context.FROM,
     to: [ request.email ],
     subject: 'Registration request',
-    text
+    text,
+    html
   });
 };
 
