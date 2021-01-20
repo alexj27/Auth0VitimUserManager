@@ -42,7 +42,7 @@ const getAdmins = async (auth0) => {
 
 const createRequestHandler = async (context, req, request) => {
   let id = uuidv4();
-  let sites = (await req.auth0.clients.getAll()).filter(s => s.client_id === config('AUTH0_CLIENT_ID'));
+  let [{web_origins: sites}] = (await req.auth0.clients.getAll()).filter(s => s.client_id === config('AUTH0_CLIENT_ID'));
 
   if (!request) {
     let connection = req.body.connection || 'Username-Password-Authentication';
@@ -93,7 +93,7 @@ const createRequestHandler = async (context, req, request) => {
   if (request && request.state === REQUEST_STATE_PENDING && request.count < 3) {
     let admins = await getAdmins(req.auth0);
     let adminsEmails = admins.map(v => v.email);
-    const [adminSite] = sites.filter(s => s.includes('webtask.io'));
+    const [adminSite] = sites.filter(s => (s || '').includes('webtask.io'));
 
     const text = `Registration request for ${request.email}`;
     const html = notifySignUp({
@@ -118,7 +118,7 @@ const createRequestHandler = async (context, req, request) => {
 
 const acceptRequestHandler = async (context, auth0, request) => {
   let user = null;
-  let sites = (await auth0.clients.getAll()).filter(s => s.client_id === config('AUTH0_CLIENT_ID'));
+  let [{web_origins: sites}] = (await auth0.clients.getAll()).filter(s => s.client_id === config('AUTH0_CLIENT_ID'));
   const [userSite] = sites.filter(s => !s.includes('webtask.io'));
 
   request.state = REQUEST_STATE_ALLOWED;
@@ -155,7 +155,7 @@ const acceptRequestHandler = async (context, auth0, request) => {
 };
 
 const declineRequestHandler = async (context, auth0, request) => {
-  let sites = (await auth0.clients.getAll()).filter(s => s.client_id === config('AUTH0_CLIENT_ID'));
+  let [{web_origins: sites}] = (await auth0.clients.getAll()).filter(s => s.client_id === config('AUTH0_CLIENT_ID'));
   const [userSite] = sites.filter(s => !s.includes('webtask.io'));
 
   request.state = REQUEST_STATE_DECLINED;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as actions from '../actions/request';
 import { connect } from 'react-redux';
-import { Field } from 'redux-form';
+import { Field, SubmissionError } from 'redux-form';
 import { reduxForm, formValueSelector } from 'redux-form';
 import './RequestForm.styles.css';
 
@@ -36,16 +36,29 @@ class RequestForm extends Component {
     status: null
   };
 
-  submit = (values) => {
-    this.props.makeRequest(values);
-    this.setState({ status: 'ok' });
+  submit = async (values) => {
+    const languageDictionary = this.props.languageDictionary || {};
+
+    try {
+      const result = await this.props.makeRequest(values);
+      console.log('-------------------->>', result);
+      this.setState({ status: 'ok' });
+      return result;
+    } catch (err) {
+      console.error(err);
+      throw new SubmissionError({
+        _error: languageDictionary.regReuestAccepted || 'Request failed'
+      })
+    }
   };
 
   render() {
-    const { handleSubmit, pristine, reset, submitting } = this.props;
+    const { handleSubmit, pristine, reset, error, submitting } = this.props;
     const { status } = this.state;
 
     const languageDictionary = this.props.languageDictionary || {};
+
+    console.log('>>>>>>>>>>>>>>>', error);
 
     if (status === 'ok') {
       return (
@@ -62,6 +75,13 @@ class RequestForm extends Component {
             <h3>{languageDictionary.regReuest || 'Registration request'}</h3>
           </div>
           <div className={'RequestForm-body'}>
+            {error && (
+              <div className="alert alert-danger" role="alert">
+                <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span className="sr-only">Error:</span>
+                {error}
+              </div>
+            )}
             <Field
               name="email"
               type="email"
