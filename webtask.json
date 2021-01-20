@@ -1,6 +1,6 @@
 {
-  "title": "Delegated Administration Dashboard",
-  "name": "auth0-delegated-admin",
+  "title": "Delegated Administration Dashboard For Vitim",
+  "name": "auth0-delegated-admin-for-vitim",
   "version": "4.3.0",
   "author": "auth0",
   "useHashName": false,
