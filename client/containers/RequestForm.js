@@ -41,7 +41,6 @@ class RequestForm extends Component {
 
     try {
       const result = await this.props.makeRequest(values);
-      console.log('-------------------->>', result);
       this.setState({ status: 'ok' });
       return result;
     } catch (err) {
@@ -53,12 +52,10 @@ class RequestForm extends Component {
   };
 
   render() {
-    const { handleSubmit, pristine, reset, error, submitting } = this.props;
+    const { handleSubmit, error, submitting } = this.props;
     const { status } = this.state;
 
     const languageDictionary = this.props.languageDictionary || {};
-
-    console.log('>>>>>>>>>>>>>>>', error);
 
     if (status === 'ok') {
       return (

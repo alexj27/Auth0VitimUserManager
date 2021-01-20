@@ -42,7 +42,7 @@ const getAdmins = async (auth0) => {
 
 const createRequestHandler = async (context, req, request) => {
   let id = uuidv4();
-  let [{web_origins: sites}] = (await req.auth0.clients.getAll()).filter(s => s.client_id === config('AUTH0_CLIENT_ID'));
+  let [{callbacks: sites}] = (await req.auth0.clients.getAll()).filter(s => s.client_id === config('AUTH0_CLIENT_ID'));
 
   if (!request) {
     let connection = req.body.connection || 'Username-Password-Authentication';
@@ -110,7 +110,9 @@ const createRequestHandler = async (context, req, request) => {
       subject: 'Registration request',
       text,
       html
-    });
+    })
+      .then(msg => console.log('Success email', msg))
+      .catch(err => console.error('Error msg', err));
     request.count++;
     context.db.update('requests', request._id, request);
   }
@@ -150,7 +152,6 @@ const acceptRequestHandler = async (context, auth0, request) => {
     mark_email_as_verified: true,
     includeEmailInRedirect: true
   };
-  console.log('acceptRequestHandler', user, data);
   await auth0.tickets.changePassword(data);
 };
 
@@ -163,11 +164,9 @@ const declineRequestHandler = async (context, auth0, request) => {
   const text = `Registration request for ${request.email} declined`;
   const html = onDeclineSingUp({
     ...request,
-    username: req.user.username,
+    username: request.email,
     site: userSite,
     support: config('SUPPORT'),
-    declineUrl: `${userSite}/${id}/decline`,
-    acceptUrl: `${userSite}/${id}/accept`
   });
   context.mg.messages.create(context.DOMAIN, {
     from: context.FROM,

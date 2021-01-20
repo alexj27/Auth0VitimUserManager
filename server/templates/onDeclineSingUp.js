@@ -36,7 +36,7 @@ export default (params) => {
                         height="250"
                         style="margin: 0 auto" />
                 </div>
-                <div style="max-width: 768px; min-width: 300px; padding: 15px; background-color: white; border-radius: 4px;">
+                <div style="width: 100%; padding: 15px; background-color: white; border-radius: 4px;">
                     <div style="padding: 10px 15px;">
                         Hello, <br />${ params.username } sorry, but your registration request has been declined.
                     </div>
